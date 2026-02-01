@@ -23,8 +23,10 @@ public class Main {
             Ticket t1 = new RegularTicket(1, 3, "Aiman");
             Ticket t2 = new StudentTicket(1, 6, "Anvar");
 
+
             controller.sell(t1);
             controller.sell(t2);
+
 
             List<Ticket> tickets=controller.list();
 

@@ -12,6 +12,7 @@ public class ReflectionUtils {
 
         System.out.println("Fields:");
         for (Field f : cls.getDeclaredFields()) {
+            f.setAccessible(true);
             System.out.println(" - " + f.getName());
         }
 

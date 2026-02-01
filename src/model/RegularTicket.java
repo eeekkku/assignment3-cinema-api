@@ -11,4 +11,6 @@ public class RegularTicket extends Ticket {
         return 2200;
     }
 
+
+
 }

@@ -7,6 +7,7 @@ CREATE TABLE movies (
 
 CREATE TABLE halls (
     id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
     capacity INT NOT NULL
 );
 
