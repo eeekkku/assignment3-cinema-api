@@ -2,19 +2,26 @@ package service;
 
 import model.Ticket;
 import repository.TicketRepository;
+import repository.CrudRepository;
 import java.sql.SQLException;
+import java.util.List;
 
 public class TicketService {
-    private final TicketRepository repo;
 
-    public TicketService(TicketRepository repo) { this.repo = repo; }
 
-    public Ticket sellTicket(Ticket ticket) throws SQLException {
+    private final CrudRepository<Ticket> repo;
+
+
+    public TicketService(CrudRepository<Ticket> repo) {
+        this.repo = repo;
+    }
+
+    public Ticket sellTicket(Ticket ticket) {
         ticket.validate();
-        if (repo.isSeatTaken(ticket.getSessionId(), ticket.getSeatNumber())) {
-            throw new IllegalArgumentException("Seat already taken");
-        }
         return repo.save(ticket);
+    }
+    public List<Ticket> getAllTickets() {
+        return repo.findAll();
     }
 }
 

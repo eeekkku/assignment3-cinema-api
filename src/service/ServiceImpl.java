@@ -1,6 +1,10 @@
 package service;
 import model.Movie;
 import repository.BaseRepository;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ServiceImpl implements BaseService {
@@ -25,6 +29,7 @@ public class ServiceImpl implements BaseService {
 
     @Override
     public void deleteMovie(int id) { repo.deleteById(id); }
+
 }
 
 
