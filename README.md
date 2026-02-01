@@ -1,80 +1,110 @@
-# assignment3-cinema-api
+# assignment4-cinema-api
 ## project overview
 
-My project is about managing cinema sessions and tickets. 
-It demonstrates OOP principles, multi-layer architecture and JDBC database operations.
+This project is a refactored version of my previous assignment 3
+which is about managing cinema sessions and tickets. 
+It demonstrates SOLID principles, layered architecture and advanced Java OOP features.
 
-Entities:
+## SOLID Documentation 
+SRP:
+TicketController handles user interaction and delegates requests to the service layer;
+TicketService contains business logic(validation, selling);
+TicketRepository handles persistence logic using JDBC;
+Ticket, RegularTicket and StudentTicket represent domain entities;
+SortingUtils,ReflectionUtils have utility responsibilities.  
 
-Movie linked to Session
-Hall linked to Session
-Session composes Movie and Hall
-Ticket (abstract): subclasses StudentTicket and RegularTicket
+OCP:
+The abstract class Ticket is open for extension but closed for modification.
+We can add new ticket types by extending Ticket without changing existing logic
 
-## OOP Design Documentation
+LCP:
+RegularTicket, StudentTicket extend Ticket. They override calculatePrice(),
+do not break system behavior when substituted
 
-Ticket (abstract)
-Fields: sessionId, seatNumber, customerName
-Methods:
-calculatePrice() (abstract)
-getTicketType() (abstract)
-printTicketInfo() (concrete method)
-Subclasses:
-RegularTicket — price 2200
-StudentTicket — price 1800
+ISP:
+Interfaces are small and focused:
+PricedItem has pricing responsibility,
+Validatable<T> has validation responsibility,
+CrudRepository<T> — persistence contract,
+No class is forced to implement unused methods.
 
-Interfaces
-Validatable — method validate() to check data correctness
-PricedItem — method getPrice() to retrieve ticket cost
+DIP:
+High-level modules depend on abstractions, not implementations.
+For example, TicketService depends on CrudRepository<Ticket>,
+TicketController depends on TicketService
+
+## Advanced OOP Features
+
+Generics
+I used it in:
+CrudRepository<T>, SortingUtils.sort(List<T>, Comparator<T>), Validatable<T>.
+
+Lambda expressions are used for sorting tickets.
+
+ReflectionUtils inspects objects at runtime: class name, fields, methods
+
+Interface Default & Static Methods
+Validatable<T> includes default method for null checks, static method for validation rules
 
 
-Session contains Movie and Hall objects.
-Each session aggregates a movie and a hall
+## OOP Documentation
 
-Polymorphism Examples
-Method printTicket(Ticket ticket) uses the abstract Ticket type to handle different ticket types.
-Example in Main.java:
-Ticket t1 = new RegularTicket(1, 5, "Yerkezhan");
-Ticket t2 = new StudentTicket(1, 2, "Valeriya");
-printTicket(t1); 
-printTicket(t2);
+Abstract Class and Subclasses
+Ticket is abstract. RegularTicket, StudentTicket are subclasses.
+Ticket defines shared state and behavior, while subclasses implement pricing logic.
 
-## Database Description
-Schema in resources: schema.sql
+Composition Relationships
+Session is composed of Movie and Hall
 
-sample sql inserts
+Polymorphism Example:
+Ticket ticket = new StudentTicket(_);
+ticket.calculatePrice(); 
+The correct implementation is resolved at runtime.
 
-INSERT INTO halls(capacity) VALUES (120);
-INSERT INTO movies(title, duration, genre) VALUES ('The Housemaid', 133, 'Thriller');
-INSERT INTO sessions(movie_id, hall_id) VALUES (1, 1);
-INSERT INTO tickets(session_id, seat_number, customer_name, ticket_type)
-VALUES (1, 5, 'Aiman', 'REGULAR');
 
-## Controller
+## Database Section
 
-CRUD Operations (CLI Example)
-Create Movie:
-Movie movie = new Movie(0, "Avatar", 162, "Sci-Fi");
-movieService.addMovie(movie);
-Read Movies:
-List<Movie> movies = movieService.getAllMovies();
-Update Movie:
-movie.setTitle("Avatar 2");
-movieService.updateMovie(movie.getId(), movie);
-Delete Movie:
-movieService.deleteMovie(movie.getId());
+Schema
+The database uses PostgreSQL and includes movies, halls, sessions, tickets.
+Constraints
+Primary keys on all tables
+Foreign keys: sessions.movie_id - movies.id; sessions.hall_id - halls.id;
+tickets.session_id - sessions.id
+Sample Inserts
+Example:
+INSERT INTO movies(title, duration, genre)
+VALUES ('Qyzym', 101, 'Dramedy');
 
-## Instructions to Compile and Run
-Compile Java files:
-javac -d out src/model/*.java src/service/*.java src/repository/*.java src/utils/*.java src/exception/*.java src/Main.java
-Run application:
-java -cp out Main
+INSERT INTO halls (capacity)
+VALUES (200);
+
+## Architecture Explanation
+Response Flow Example
+Main calls TicketController.sell(ticket)
+Controller delegates to TicketService
+Service validates business rules
+Repository persists data via JDBC
+Result is returned back up the stack
+
+## Execution Instructions
+Requirements: Java 17+, PostgreSQL, JDBC Driver
+How to Run
+Create database cinema,execute schema.sql, update DB credentials in DatabaseConnection
+Compile: javac -d out src/**/*.java
+Run: java -cp out Main
+
+## Screenshots
+in docs
+
+ReflectionUtils uses Java RTTI to inspect runtime class data such as methods.
+Different Ticket subclasses override calculatePrice(), which is called through the base Ticket reference.
+SortingUtils.sort() accepts a generic list and a lambda-based Comparator.
+
 
 ## reflection 
 
-I learned implementing abstract classes and polymorphism,
-exceptions.
+I learned applying SOLID principles.
 
-It was challenging to understand principles
+It was challenging to refactor existing code without breaking functionality
 
-Benefits of JDBC and multi-layer design are clear separation of business logic and database access.
+SOLID principles make the system maintainable and easier to understand.
